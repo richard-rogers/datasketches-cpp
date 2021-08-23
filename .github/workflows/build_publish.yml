@@ -56,6 +56,7 @@ jobs:
           cibuildwheel --output-dir dist
           ls dist
         env:
+          CIBW_SKIP: "*-win32"
           CIBW_BUILD: "cp36-* cp37-* cp38-* cp39-*"
           CIBW_BEFORE_BUILD: "rm -fr python/datasketches.* && rm -fr build/* && pip install cython"
       - uses: actions/upload-artifact@v2
