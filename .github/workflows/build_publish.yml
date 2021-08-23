@@ -4,35 +4,84 @@ on: [ push, pull_request ]
 
 jobs:
   build_wheels:
-    name: Build Wheels On ${{ matrix.config.name }}
-    runs-on: ${{ matrix.config.os }}
+    name: Build wheels ${{ matrix.CIBW_BUILD }}
+    runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
-        config:
-#          - {
-#            name: "MacOS Latest, Clang",
-#            os: macos-latest,
-#            test_target: test,
-#            cc: "clang", cxx: "clang++"
-#          }
-#          - {
-#            name: "Ubuntu Latest, GCC",
-#            os: ubuntu-latest,
-#            test_target: test,
-#            cc: "gcc", cxx: "g++"
-#          }
-          - {
-            name: "Windows Latest, MSVC",
-            os: windows-latest,
-            test_target: RUN_TESTS,
-            cc: "cl", cxx: "cl",
-            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat"
-          }
-            #- {
-            #    name: "Windows Latest, MinGW+gcc",
-          #    os: windows-latest,
-          #    cc: "gcc", cxx: "g++"
-          #  }
+        include:
+#          - CIBW_BUILD: cp36-manylinux_x86_64
+#            os: ubuntu-latest
+#            arch: x86_64
+#            CIBW_PLATFORM: linux
+#          - CIBW_BUILD: cp37-manylinux_x86_64
+#            os: ubuntu-latest
+#            arch: x86_64
+#            CIBW_PLATFORM: linux
+#          - CIBW_BUILD: cp38-manylinux_x86_64
+#            os: ubuntu-latest
+#            arch: x86_64
+#            CIBW_PLATFORM: linux
+#          - CIBW_BUILD: cp39-manylinux_x86_64
+#            os: ubuntu-latest
+#            arch: x86_64
+#            CIBW_PLATFORM: linux
+#
+#          - CIBW_BUILD: cp37-manylinux_aarch64
+#            os: ubuntu-latest
+#            arch: aarch64
+#            CIBW_PLATFORM: linux
+#          - CIBW_BUILD: cp38-manylinux_aarch64
+#            os: ubuntu-latest
+#            arch: aarch64
+#            CIBW_PLATFORM: linux
+#          - CIBW_BUILD: cp39-manylinux_aarch64
+#            os: ubuntu-latest
+#            arch: aarch64
+#            CIBW_PLATFORM: linux
+#
+#          - CIBW_BUILD: cp36-macosx_x86_64
+#            os: macos-latest
+#            arch: x86_64
+#            CIBW_PLATFORM: macos
+#          - CIBW_BUILD: cp37-macosx_x86_64
+#            os: macos-latest
+#            arch: x86_64
+#            CIBW_PLATFORM: macos
+#          - CIBW_BUILD: cp38-macosx_x86_64
+#            os: macos-latest
+#            arch: x86_64
+#            CIBW_PLATFORM: macos
+#          - CIBW_BUILD: cp39-macosx_x86_64
+#            os: macos-latest
+#            arch: x86_64
+#            CIBW_PLATFORM: macos
+#
+#          - CIBW_BUILD: cp38-macosx_arm64
+#            os: macos-latest
+#            arch: arm64
+#            CIBW_PLATFORM: macos
+#          - CIBW_BUILD: cp39-macosx_arm64
+#            os: macos-latest
+#            arch: arm64
+#            CIBW_PLATFORM: macos
+
+          - CIBW_BUILD: cp36-win_amd64
+            os: windows-latest
+            arch: AMD64
+            CIBW_PLATFORM: windows
+          - CIBW_BUILD: cp37-win_amd64
+            os: windows-latest
+            arch: AMD64
+            CIBW_PLATFORM: windows
+          - CIBW_BUILD: cp38-win_amd64
+            os: windows-latest
+            arch: AMD64
+            CIBW_PLATFORM: windows
+          - CIBW_BUILD: cp39-win_amd64
+            os: windows-latest
+            arch: AMD64
+            CIBW_PLATFORM: windows
 
     steps:
       - uses: actions/checkout@v2
@@ -50,16 +99,12 @@ jobs:
           pip install -e ".[compat,dev]" cibuildwheel twine
       - name: Install Python dependencies
         run: python -m pip install --upgrade pip setuptools wheel numpy tox
-      - name: Clean up dist
-        run: python -m pip install --upgrade pip setuptools wheel numpy tox
       - name: Build wheels
         run: |
           python setup.py bdist_wheel
           cibuildwheel --output-dir dist
           ls dist
         env:
-          CIBW_SKIP: "*-win32"
-          CIBW_BUILD: "cp36-* cp37-* cp38-* cp39-*"
           CIBW_BEFORE_BUILD: "DEL /Q /F /S python/datasketches.* && DEL /Q /F /S build/* && pip install cython"
       - uses: actions/upload-artifact@v2
         with:
