@@ -108,7 +108,7 @@ jobs:
           CIBW_BUILD: ${{ matrix.CIBW_BUILD }}
           CIBW_PLATFORM: ${{ matrix.CIBW_PLATFORM }}
           CIBW_ARCHS: ${{matrix.arch}}
-          CIBW_BEFORE_BUILD: "pip install cython"
+          CIBW_BEFORE_BUILD: "pip install cython && pip install cmake && cmake"
       - uses: actions/upload-artifact@v2
         with:
           path: ./dist/*.whl
