@@ -9,18 +9,18 @@ jobs:
     strategy:
       matrix:
         config:
-          - {
-            name: "MacOS Latest, Clang",
-            os: macos-latest,
-            test_target: test,
-            cc: "clang", cxx: "clang++"
-          }
-          - {
-            name: "Ubuntu Latest, GCC",
-            os: ubuntu-latest,
-            test_target: test,
-            cc: "gcc", cxx: "g++"
-          }
+#          - {
+#            name: "MacOS Latest, Clang",
+#            os: macos-latest,
+#            test_target: test,
+#            cc: "clang", cxx: "clang++"
+#          }
+#          - {
+#            name: "Ubuntu Latest, GCC",
+#            os: ubuntu-latest,
+#            test_target: test,
+#            cc: "gcc", cxx: "g++"
+#          }
           - {
             name: "Windows Latest, MSVC",
             os: windows-latest,
@@ -51,8 +51,7 @@ jobs:
       - name: Install Python dependencies
         run: python -m pip install --upgrade pip setuptools wheel numpy tox
       - name: Clean up dist
-        run: |
-          rm -fr ./dist/*
+        run: python -m pip install --upgrade pip setuptools wheel numpy tox
       - name: Build wheels
         run: |
           python setup.py bdist_wheel
@@ -61,7 +60,7 @@ jobs:
         env:
           CIBW_SKIP: "*-win32"
           CIBW_BUILD: "cp36-* cp37-* cp38-* cp39-*"
-          CIBW_BEFORE_BUILD: "rm -fr python/datasketches.* && rm -fr build/* && pip install cython"
+          CIBW_BEFORE_BUILD: "DEL /Q /F /S python/datasketches.* && DEL /Q /F /S build/* && pip install cython"
       - uses: actions/upload-artifact@v2
         with:
           path: ./dist/*.whl
