@@ -105,7 +105,7 @@ jobs:
           cibuildwheel --output-dir dist
           ls dist
         env:
-          CIBW_BEFORE_BUILD: "DEL /Q /F /S python/datasketches.* && DEL /Q /F /S build/* && pip install cython"
+          CIBW_BEFORE_BUILD: "pip install cython"
       - uses: actions/upload-artifact@v2
         with:
           path: ./dist/*.whl
