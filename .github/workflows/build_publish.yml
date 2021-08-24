@@ -108,7 +108,9 @@ jobs:
           CIBW_BUILD: ${{ matrix.CIBW_BUILD }}
           CIBW_PLATFORM: ${{ matrix.CIBW_PLATFORM }}
           CIBW_ARCHS: ${{matrix.arch}}
-          CIBW_BEFORE_BUILD: "pip install cython && pip install cmake && cmake ."
+          CIBW_BEFORE_BUILD: "pip install cython cmake delvewheel"
+          CIBW_REPAIR_WHEEL_COMMAND_WINDOWS: "delvewheel show {wheel} && delvewheel repair -w {dest_dir} {wheel}"
+
       - uses: actions/upload-artifact@v2
         with:
           path: ./dist/*.whl
